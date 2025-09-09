@@ -1,5 +1,7 @@
 package com.practicing.to_do_list.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.practicing.to_do_list.dto.CategoryDTO;
 import com.practicing.to_do_list.entities.Category;
 import com.practicing.to_do_list.repositories.CategoryRepository;
+import com.practicing.to_do_list.services.exceptions.ResourceNotFoundException;
 
 @Service
 public class CategoryService {
@@ -22,5 +25,11 @@ public class CategoryService {
 		Page<Category> list = repository.findAll(pageable);
 		Page<CategoryDTO> listDTO = list.map(x -> new CategoryDTO(x));
 		return listDTO;
+	}
+
+	public CategoryDTO findById(Long id) {
+		Optional<Category> obj = repository.findById(id);
+		Category entity = obj.orElseThrow(() -> new ResourceNotFoundException("Entity not found"));
+		return new CategoryDTO(entity);
 	}
 }

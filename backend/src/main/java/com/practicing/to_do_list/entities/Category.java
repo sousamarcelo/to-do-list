@@ -4,13 +4,29 @@ import java.io.Serializable;
 import java.time.Instant;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
+@Entity
+@Table(name = "tb_category")
 public class Category implements Serializable {
 	private static final long serialVersionUID = 1L;
-		
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String name;
+	
+	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant createdAt;
+	
+	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	private Instant updatedAt;
 	
 	public Category() {
@@ -19,8 +35,6 @@ public class Category implements Serializable {
 	public Category(Long id, String name) {
 		this.id = id;
 		this.name = name;
-		this.createdAt = Instant.now();
-		this.updatedAt = null;
 	}
 
 	public Long getId() {
@@ -42,17 +56,19 @@ public class Category implements Serializable {
 	public Instant getCreatedAt() {
 		return createdAt;
 	}
-
-	public void setCreatedAt(Instant createdAt) {
-		this.createdAt = createdAt;
+	
+	@PrePersist
+	public void prePersist() {
+		this.createdAt = Instant.now();
 	}
 
 	public Instant getUpdatedAt() {
 		return updatedAt;
 	}
-
-	public void setUpdatedAt(Instant updatedAt) {
-		this.updatedAt = updatedAt;
+	
+	@PreUpdate
+	public void preUpdate() {
+		this.updatedAt = Instant.now();
 	}
 
 	@Override

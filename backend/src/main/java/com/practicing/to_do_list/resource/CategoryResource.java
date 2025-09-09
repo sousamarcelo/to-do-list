@@ -1,14 +1,15 @@
 package com.practicing.to_do_list.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.practicing.to_do_list.entities.Category;
+import com.practicing.to_do_list.dto.CategoryDTO;
+import com.practicing.to_do_list.services.CategoryService;
 
 
 
@@ -16,11 +17,12 @@ import com.practicing.to_do_list.entities.Category;
 @RequestMapping(value = "/categories")
 public class CategoryResource {
 	
+	@Autowired
+	private CategoryService service;
+	
 	@GetMapping
-	public ResponseEntity<List<Category>> findAll(){
-		List<Category> list = new ArrayList<>();
-		list.add(new Category(1L, "Gardem"));
-		list.add(new Category(2L, "Education"));
-		return ResponseEntity.ok().body(list);
+	public ResponseEntity<Page<CategoryDTO>> findAll(Pageable pageable){
+		Page<CategoryDTO> result = service.findAllPaged(pageable);		
+		return ResponseEntity.ok().body(result);
 	}
 }

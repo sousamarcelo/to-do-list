@@ -3,9 +3,11 @@ package com.practicing.to_do_list.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.practicing.to_do_list.dto.CategoryDTO;
@@ -14,6 +16,7 @@ import com.practicing.to_do_list.entities.Category;
 import com.practicing.to_do_list.entities.Task;
 import com.practicing.to_do_list.repositories.CategoryRepository;
 import com.practicing.to_do_list.repositories.TaskRepository;
+import com.practicing.to_do_list.services.exceptions.DatabaseException;
 import com.practicing.to_do_list.services.exceptions.ResourceNotFoundException;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -54,13 +57,27 @@ public class TaskService {
 	@Transactional
 	public TaskDTO update(Long id, TaskDTO dto) {
 		try {
-		Task entity = repository.getReferenceById(id);
-		copyDTOToEntoty(dto, entity);
-		entity = repository.save(entity);
-		return new TaskDTO(entity);
+			Task entity = repository.getReferenceById(id);
+			copyDTOToEntoty(dto, entity);
+			entity = repository.save(entity);
+			return new TaskDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("Id not found " + id);
 		}
+	}
+	
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public void delete(Long id) {
+		if (!repository.existsById(id)) {
+			throw new ResourceNotFoundException("Id not found " + id);
+		}
+		
+		try {
+			repository.deleteById(id);
+		} catch (DataIntegrityViolationException e) {
+			throw new DatabaseException("Referencial integrity failure");
+		}
+
 	}
 
 	private void copyDTOToEntoty(TaskDTO dto, Task entity) {

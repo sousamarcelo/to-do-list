@@ -54,7 +54,6 @@ public class Task {
 	}
 
 	public Task(Long id, String title, String description, TaskStatusEnum status, Instant createdAt) {
-		super();
 		this.id = id;
 		this.title = title;
 		this.description = description;

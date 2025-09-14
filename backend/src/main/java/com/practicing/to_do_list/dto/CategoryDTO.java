@@ -19,11 +19,11 @@ public class CategoryDTO {
 		this.name = name;
 	}
 
-	public CategoryDTO(Long id, String name, Instant createdAt, Instant updatedAt) {
+	public CategoryDTO(Long id, String name, String createdAt, String updatedAt) {
 		this.id = id;
 		this.name = name;
-		this.createdAt = createdAt;
-		this.updatedAt = updatedAt;
+		this.createdAt = Instant.parse(createdAt);
+		this.updatedAt = Instant.parse(updatedAt);
 	}
 	
 	public CategoryDTO(Category entity) {
@@ -53,15 +53,15 @@ public class CategoryDTO {
 		return createdAt;
 	}
 
-	public void setCreatedAt(Instant createdAt) {
-		this.createdAt = createdAt;
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = Instant.parse(createdAt);
 	}
 
 	public Instant getUpdatedAt() {
 		return updatedAt;
 	}
 
-	public void setUpdatedAt(Instant updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUpdatedAt(String updatedAt) {
+		this.updatedAt = Instant.parse(updatedAt);
 	}
 }
